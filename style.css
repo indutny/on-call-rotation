@@ -1,0 +1,107 @@
+html, body {
+  height: 100%;
+  width: 100%;
+  font-family: Inter, 'Source Sans Pro', 'Source Han Sans', -apple-system, system-ui,
+  'Segoe UI', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background: #f6eee3;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@property --t {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+#app {
+  --container-size: 400px;
+  --center: calc((var(--container-size) - var(--avatar-size)) / 2);
+  --rotations: 4;
+
+  /* 1-0 while fading out on final rotation */
+  --fade-out-t: calc(pow(clamp(0, var(--t) * var(--rotations) - var(--rotations) + 1, 1), 24));
+  --fade-out: calc(1 - var(--fade-out-t));
+
+  width: var(--container-size);
+  height: var(--container-size);
+  position: relative;
+
+  transition: --t 8000ms ease-out;
+}
+
+.avatar {
+  --position: var(--index) / var(--count);
+  --local-t: calc(max(var(--position), var(--t) * var(--rotations)) - var(--position));
+  --angle: calc((var(--local-t) - 0.25) * 2 * pi);
+  --fade-speed: 3;
+  --rotation-radius: var(--avatar-size);
+  --final-size: calc(min(
+    var(--avatar-size) * 0.75, /* for when there are 2-3 people */
+    var(--container-size) / (var(--count) - 1) - 4px
+  ));
+  --final-spacing: calc(
+    (var(--container-size) - (var(--count) - 1) * var(--final-size)) /
+      var(--count)
+  );
+  --final-x: calc(
+    var(--final-spacing) +
+      (var(--final-size) + var(--final-spacing)) * var(--final-index)
+  );
+
+  --size: calc(
+    var(--fade-out) * var(--avatar-size) +
+    (1 - var(--fade-out)) * var(--final-size)
+  );
+
+  /* 0-1 while fading in */
+  --fade-in: calc(var(--fade-speed) * min(1 / var(--fade-speed), var(--local-t)));
+
+  --rotation-x: calc(var(--center) + cos(var(--angle)) * var(--rotation-radius));
+  --rotation-y: calc(var(--center) + sin(var(--angle)) * var(--rotation-radius));
+
+  position: absolute;
+  z-index: 1;
+  left: calc(var(--fade-out) * var(--rotation-x) + (1 - var(--fade-out)) * var(--final-x));
+  top: calc(var(--fade-out) * var(--rotation-y));
+  width: var(--size);
+  height: var(--size);
+
+  border-radius: var(--size);
+  padding: 2px;
+  border: 2px solid #333;
+  opacity: calc(var(--fade-in));
+  transform: scale(var(--fade-in));
+}
+
+.avatar.finalist {
+  /* Finalist */
+  --fade-out: 1;
+  --rotation-radius: calc(var(--avatar-size) * (1 - var(--fade-out-t)));
+
+  z-index: 10;
+  transform: scale(calc(var(--fade-in) + var(--fade-out-t)));
+}
+
+.text {
+  position: absolute;
+  top: calc(var(--container-size) / 2 + var(--avatar-size) + 16px);
+  left: 0;
+
+  width: 100%;
+  opacity: var(--fade-out-t);
+
+  text-align: center;
+  font-size: 32px;
+  font-weight: bold;
+}
