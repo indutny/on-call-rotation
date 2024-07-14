@@ -75,7 +75,7 @@ const finalistName = names[offset];
 
 const text = document.createElement('div');
 text.className = 'text';
-text.textContent = `Next on-call: ${finalistName}!`;
+text.textContent = `Next On-Call: ${finalistName}!`;
 app.appendChild(text);
 
 // Start animation
