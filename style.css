@@ -85,7 +85,7 @@ body {
   padding: 2px;
   background: #f6eee3;
   border: 2px solid #333;
-  opacity: calc(var(--fade-in));
+  opacity: var(--fade-in);
   transform: scale(var(--fade-in));
 }
 
