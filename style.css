@@ -26,7 +26,10 @@ body {
 
 #app {
   --container-size: 400px;
-  --center: calc((var(--container-size) - var(--avatar-size)) / 2);
+  --max-rotation-radius: 100px;
+  --avatar-size: calc(
+    var(--max-rotation-radius) * min(1, 2 * pi * 0.75 / var(--count))
+  );
   --rotations: 4;
 
   /* 1-0 while fading out on final rotation */
@@ -45,7 +48,7 @@ body {
   --local-t: calc(max(var(--position), var(--t) * var(--rotations)) - var(--position));
   --angle: calc((var(--local-t) - 0.25) * 2 * pi);
   --fade-speed: 3;
-  --rotation-radius: var(--avatar-size);
+  --rotation-radius: var(--max-rotation-radius);
   --final-size: calc(min(
     var(--avatar-size) * 0.75, /* for when there are 2-3 people */
     var(--container-size) / (var(--count) - 1) - 4px
@@ -67,6 +70,7 @@ body {
   /* 0-1 while fading in */
   --fade-in: calc(var(--fade-speed) * min(1 / var(--fade-speed), var(--local-t)));
 
+  --center: calc((var(--container-size) - var(--size)) / 2);
   --rotation-x: calc(var(--center) + cos(var(--angle)) * var(--rotation-radius));
   --rotation-y: calc(var(--center) + sin(var(--angle)) * var(--rotation-radius));
 
@@ -88,15 +92,18 @@ body {
 .avatar.finalist {
   /* Finalist */
   --fade-out: 1;
-  --rotation-radius: calc(var(--avatar-size) * (1 - var(--fade-out-t)));
+  --rotation-radius: calc(var(--max-rotation-radius) * (1 - var(--fade-out-t)));
+  --size: calc(
+    var(--fade-out-t) * var(--container-size) / 2 +
+      (1 - var(--fade-out-t)) * var(--avatar-size)
+  );
 
   z-index: 10;
-  transform: scale(calc(var(--fade-in) + var(--fade-out-t)));
 }
 
 .text {
   position: absolute;
-  top: calc(var(--container-size) / 2 + var(--avatar-size) + 16px);
+  top: calc(var(--container-size) * 0.75 + 16px);
   left: 0;
 
   width: 100%;

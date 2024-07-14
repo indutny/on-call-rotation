@@ -15,7 +15,6 @@ const taggedNames = names.map((name, index) => {
 });
 
 app.style.setProperty('--count', names.length);
-app.style.setProperty('--avatar-size', `${AVATAR_SIZE}px`);
 
 // Shuffle tagged names
 for (let i = taggedNames.length - 1; i >= 1; i--) {
